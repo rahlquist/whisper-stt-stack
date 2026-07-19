@@ -1,0 +1,19 @@
+[Unit]
+Description=Whisper OpenAI-compatible proxy (port 8081)
+After=whisper-en.service whisper-sv.service
+Wants=whisper-en.service whisper-sv.service
+
+[Service]
+Type=simple
+User=rahlquist
+WorkingDirectory=/home/rahlquist/whisper-models
+Environment=BACKEND_URL=http://127.0.0.1:8083
+Environment=BACKEND_SV_URL=http://127.0.0.1:8082
+Environment=PROXY_PORT=8081
+Environment=STRIP_NEWLINES=1
+ExecStart=/home/rahlquist/whisper-env/bin/python3 /home/rahlquist/whisper-models/whisper_openai_proxy.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+# Models are downloaded per whisper_build.md — never commit (multi-GB binaries)
+*.bin
+
+# Build artifacts (whisper.cpp / whisper.cpp-amd source + compiled binaries)
+whisper.cpp/
+whisper.cpp-amd/
+
+# Python venv
+whisper-env/
+
+# OS / editor noise
+.DS_Store
+*.swp

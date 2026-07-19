@@ -1,0 +1,15 @@
+[Unit]
+Description=Whisper SV STT server (kb-whisper-large, CPU)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=rahlquist
+WorkingDirectory=/home/rahlquist/whisper-models/kb-whisper-large-ggml/whisper.cpp/whisper.cpp
+ExecStart=/home/rahlquist/whisper-models/kb-whisper-large-ggml/whisper.cpp/whisper.cpp/build/bin/whisper-server --model /home/rahlquist/whisper-models/kb-whisper-large-ggml/ggml-model.bin --port 8082 --convert
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
