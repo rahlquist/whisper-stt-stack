@@ -28,6 +28,8 @@ API, so any OpenAI-compatible client works.
     than CPU.
   - Swedish model on CPU.
   - The proxy (the only public face, port 8081).
+- `architecture.html` — [architecture diagram](architecture.html) (clients → proxy
+  → EN/Vulkan + SV/CPU backends, with legend and summary cards).
 - `nginx/slug-stt.conf` — optional TLS terminator for browser-mic use (secure
   context required for `getUserMedia`).
 - `.gitignore` — excludes the multi-GB model files and build artifacts (downloaded
