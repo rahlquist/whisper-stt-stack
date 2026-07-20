@@ -130,6 +130,12 @@ Key proxy behaviors (read the file header for full env list):
 - `STRIP_NEWLINES=1` — collapses whisper's inter-segment newlines (whisper inserts
   `\n` between segments; pausing mid-speech makes a new segment → spurious line
   break in the client). ON by default in our unit. Set `0` to preserve raw output.
+- `ADD_FINAL_NEWLINE=1` — appends a single trailing `\n` to the returned `text`
+  (and to each verbose_json segment text). ON by default. NOTE: this is just a
+  newline character in the JSON string; it does NOT make the client press Enter.
+  Auto-submit / "hit Enter" is the CLIENT's job (see section 9, voxtype auto_submit).
+  Keep ADD_FINAL_NEWLINE if you want a trailing line break in the typed text; it is
+  independent of submission.
 - Model routing: default = English backend. Header `X-Model: sv` (or `swe`/`swedish`)
   routes to the Swedish backend. `voxtype` sends no header → English.
 - The proxy's code-level DEFAULTS (`BACKEND_URL`→8082, `BACKEND_SV_URL`→8080) are
@@ -262,6 +268,26 @@ point — read carefully.
   the browser. Fix = HTTPS in front of 8081 (nginx + self-signed cert, see section 10).
   `voxtype` itself captures mic locally on yogaman and POSTs audio, so it is NOT subject
   to the browser secure-context rule — only the web demo page is.
+
+### voxtype auto-submit ("hit Enter" after transcription)
+
+The server/proxy CANNOT press Enter in the client — it only returns text. Auto-submit
+is a voxtype feature. In `~/.config/voxtype/config.toml` (managed by the voxtype-settings
+GUI), under `[output]` and `[text]`:
+
+```toml
+[output]
+auto_submit = true          # voxtype sends a real Enter (via ydotool/wtype virtual keyboard) after typing
+shift_enter_newlines = false
+
+[text]
+smart_auto_submit = true    # submit on detected sentence end / natural pause, not always
+```
+
+After editing, restart the user service: `systemctl --user restart voxtype.service`.
+With these on, each transcription auto-advances/submits — no manual Enter. The proxy's
+`ADD_FINAL_NEWLINE` toggle is unrelated to this (it only adds a `\n` to the typed string);
+leave it or disable it as you prefer.
 
 Verification from yogaman:
 ```

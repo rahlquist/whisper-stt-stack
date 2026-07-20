@@ -21,13 +21,20 @@ Env:
   Model selection: default = English (medium.en). Send header X-Model: sv to use
   the Swedish kb-whisper-large model. (VoxTalk sends no header -> English.)
 
-  STRIP_NEWLINES  Optional. whisper.cpp inserts "\\n" between segments in its
+  STRIP_NEWLINES  Optional. whisper.cpp inserts "\n" between segments in its
                   `text` field. When you pause mid-speech, whisper starts a new
                   segment and that newline shows up as a spurious carriage return
                   / line break in the client. Set STRIP_NEWLINES=1 to collapse all
-                  internal newlines (\\n, \\r\\n, \\r) to single spaces in the returned
+                  internal newlines (\n, \r\n, \r) to single spaces in the returned
                   `text` (and in verbose_json segment texts). Default OFF (0) so the
                   raw whisper output is passed through unchanged. Set to 1 to enable.
+
+  ADD_FINAL_NEWLINE  Optional. Set ADD_FINAL_NEWLINE=1 to append a single trailing
+                     newline ("\n") to the returned `text` (and to each verbose_json
+                     segment text). Useful when the client expects a final line
+                     break / carriage return after processing. Default OFF (0).
+                     Independent of STRIP_NEWLINES: you can strip internal newlines
+                     AND still emit one final newline if both are enabled.
 
 Stdlib only. Python 3.13+ safe (no cgi module used).
 """
@@ -51,6 +58,9 @@ MODEL_NAME = os.environ.get("MODEL_NAME", "whisper-1")
 # Collapse internal newlines (\n, \r\n, \r) to single spaces in returned text.
 # Off by default so raw whisper.cpp segment output is preserved. See header.
 STRIP_NEWLINES = os.environ.get("STRIP_NEWLINES", "0") == "1"
+
+# Append a single trailing newline to the returned text. ON by default.
+ADD_FINAL_NEWLINE = os.environ.get("ADD_FINAL_NEWLINE", "1") == "1"
 
 
 def backend_for(req_headers):
@@ -145,9 +155,13 @@ def _map_response(openai_format, backend_json, duration_sec):
     # Optional: collapse spurious newlines (whisper inserts \n between segments;
     # pausing mid-speech creates a new segment -> unwanted line break).
     def _norm_text(t):
-        if not STRIP_NEWLINES or not isinstance(t, str):
+        if not isinstance(t, str):
             return t
-        return re.sub(r"\s*\n\s*", " ", t).strip()
+        if STRIP_NEWLINES:
+            t = re.sub(r"\s*\n\s*", " ", t).strip()
+        if ADD_FINAL_NEWLINE:
+            t = t + "\n"
+        return t
 
     if openai_format == "verbose_json":
         segs = data.get("segments", [])
