@@ -11,6 +11,11 @@ and get text back. The intended use is push-to-talk voice-to-text from a Linux
 client (`voxtype` on `yogaman`), but the server speaks the OpenAI transcription
 API, so any OpenAI-compatible client works.
 
+> **Note on the Swedish model:** the Swedish (`kb-whisper-large`) backend is a
+> leftover artifact of the initial setup, which began as a Swedish+English
+> configuration. It was not a deliberate choice — the primary use is English.
+> The SV backend is kept only for completeness; the default route is English.
+
 ## What's here
 
 - `whisper_build.md` — full from-scratch build + reproducibility doc (packages,
