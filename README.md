@@ -28,7 +28,7 @@ API, so any OpenAI-compatible client works.
     than CPU.
   - Swedish model on CPU.
   - The proxy (the only public face, port 8081).
-- `architecture.html` — [architecture diagram](architecture.html) (clients → proxy
+- `architecture.html` — [architecture diagram](https://htmlpreview.github.io/?https://github.com/rahlquist/whisper-stt-stack/blob/main/architecture.html) (clients → proxy
   → EN/Vulkan + SV/CPU backends, with legend and summary cards).
 - `nginx/slug-stt.conf` — optional TLS terminator for browser-mic use (secure
   context required for `getUserMedia`).
